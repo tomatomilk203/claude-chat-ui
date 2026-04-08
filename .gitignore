@@ -1,0 +1,6 @@
+sessions/
+uploads/
+meta.json
+__pycache__/
+*.pyc
+.env
