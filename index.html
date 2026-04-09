@@ -134,6 +134,37 @@ body::before {
 
 .empty { padding: 32px 16px; text-align: center; color: var(--muted); font-size: 13px; font-family: var(--font-mono); }
 
+/* Group */
+.group-head {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 14px;
+  cursor: pointer;
+  background: var(--sb);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 1;
+  transition: background .1s;
+}
+.group-head:hover { background: var(--hover); }
+.group-head.has-active { background: #1a1400; }
+.group-arrow { font-size: 9px; color: var(--muted); flex-shrink: 0; width: 10px; }
+.group-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--amber);
+  flex: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.group-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--dim);
+  padding: 1px 6px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.s-count { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
+
 /* ── Main ── */
 .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
@@ -358,7 +389,7 @@ body::before {
 <script>
 marked.setOptions({ breaks: true, gfm: true });
 
-let sessions = [], currentId = null;
+let sessions = [], currentId = null, currentFilter = '';
 
 async function load() {
   const r = await fetch('/api/sessions');
@@ -366,23 +397,64 @@ async function load() {
   render(sessions);
 }
 
+// 折りたたみ状態を保持
+const collapsed = new Set();
+
 function render(list) {
   const el = document.getElementById('list');
   if (!list.length) { el.innerHTML = '<div class="empty">no sessions</div>'; return; }
-  el.innerHTML = list.map(s => `
-    <div class="s-item ${s.id===currentId?'active':''}" onclick="open_('${s.id}')" data-id="${s.id}">
-      <div class="s-title">${esc(s.title)}</div>
-      <div class="s-foot">
-        <span class="s-project">${esc(s.project)}</span>
-        <span class="s-time">${reltime(s.last_timestamp)}</span>
-      </div>
-    </div>`).join('');
+
+  // プロジェクトでグループ化
+  const groups = {};
+  for (const s of list) {
+    const key = s.project || '~';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(s);
+  }
+
+  // 最終更新が新しい順にグループ並べ替え
+  const sortedGroups = Object.entries(groups).sort((a, b) =>
+    b[1][0].last_timestamp.localeCompare(a[1][0].last_timestamp)
+  );
+
+  el.innerHTML = sortedGroups.map(([proj, items]) => {
+    const isOpen = !collapsed.has(proj);
+    const activeInGroup = items.some(s => s.id === currentId);
+    return `
+      <div class="group">
+        <div class="group-head ${activeInGroup?'has-active':''}" onclick="toggleGroup('${esc(proj)}')">
+          <span class="group-arrow">${isOpen ? '▾' : '▸'}</span>
+          <span class="group-name">${esc(proj)}</span>
+          <span class="group-count">${items.length}</span>
+        </div>
+        <div class="group-body" style="display:${isOpen?'block':'none'}">
+          ${items.map(s => `
+            <div class="s-item ${s.id===currentId?'active':''}" onclick="open_('${s.id}')" data-id="${s.id}">
+              <div class="s-title">${esc(s.title)}</div>
+              <div class="s-foot">
+                <span class="s-time">${reltime(s.last_timestamp)}</span>
+                <span class="s-count">${s.message_count}件</span>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleGroup(proj) {
+  if (collapsed.has(proj)) collapsed.delete(proj);
+  else collapsed.add(proj);
+  render(currentFilter ? sessions.filter(s =>
+    s.title.toLowerCase().includes(currentFilter) ||
+    s.project.toLowerCase().includes(currentFilter)
+  ) : sessions);
 }
 
 function filter(q) {
-  render(q ? sessions.filter(s =>
-    s.title.toLowerCase().includes(q.toLowerCase()) ||
-    s.project.toLowerCase().includes(q.toLowerCase())
+  currentFilter = q.toLowerCase();
+  render(currentFilter ? sessions.filter(s =>
+    s.title.toLowerCase().includes(currentFilter) ||
+    s.project.toLowerCase().includes(currentFilter)
   ) : sessions);
 }
 
