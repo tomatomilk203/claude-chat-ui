@@ -11,7 +11,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  /* DESIGN.md palette */
   --parchment:    #f5f4ed;
   --ivory:        #faf9f5;
   --white:        #ffffff;
@@ -27,75 +26,71 @@
   --border-lo:    #f0eee6;
   --border-hi:    #e8e6dc;
   --ring:         #d1cfc5;
-
-  /* fonts */
   --serif: 'Lora', Georgia, serif;
   --mono:  'IBM Plex Mono', monospace;
   --sans:  'DM Sans', system-ui, sans-serif;
-
-  /* sidebar width */
   --sb-w: 300px;
 }
 
 html, body { height: 100%; overflow: hidden; background: var(--parchment); color: var(--near-black); font-family: var(--sans); font-size: 15px; }
 
-/* ────────────────────────── Layout ────────────────────── */
 .app { display: flex; height: 100vh; }
 
-/* ────────────────────────── Sidebar ───────────────────── */
+/* ── Sidebar ── */
 .sidebar {
   width: var(--sb-w); min-width: var(--sb-w);
   background: var(--ivory);
   border-right: 1px solid var(--border-hi);
-  display: flex; flex-direction: column;
-  overflow: hidden;
+  display: flex; flex-direction: column; overflow: hidden;
 }
-
-/* Sidebar header */
 .sb-head {
   padding: 18px 16px 14px;
   background: var(--ivory);
   border-bottom: 1px solid var(--border-hi);
   flex-shrink: 0;
 }
-
 .sb-logo {
-  display: flex; align-items: baseline; gap: 8px;
+  display: flex; align-items: center; gap: 8px;
   margin-bottom: 12px;
 }
 .sb-logo-text {
-  font-family: var(--serif);
-  font-size: 17px; font-weight: 500;
-  color: var(--near-black);
-  letter-spacing: -.01em;
+  font-family: var(--serif); font-size: 17px; font-weight: 500;
+  color: var(--near-black); letter-spacing: -.01em;
 }
 .sb-logo-badge {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--terracotta);
-  background: rgba(201,100,66,.1);
-  padding: 2px 6px; border-radius: 20px;
-  letter-spacing: .04em;
+  font-family: var(--mono); font-size: 9px;
+  color: var(--terracotta); background: rgba(201,100,66,.1);
+  padding: 2px 6px; border-radius: 20px; letter-spacing: .04em;
 }
 
-.sb-search {
-  position: relative;
+/* Lang toggle */
+.lang-toggle {
+  display: flex; gap: 2px; margin-left: auto;
+  background: var(--border-hi); border-radius: 6px; padding: 2px;
 }
+.lang-btn {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  padding: 3px 8px; border-radius: 4px; border: none;
+  background: transparent; color: var(--stone);
+  cursor: pointer; transition: background .15s, color .15s;
+  letter-spacing: .04em;
+}
+.lang-btn.active {
+  background: var(--white); color: var(--near-black);
+  box-shadow: 0 0 0 1px var(--ring);
+}
+
+.sb-search { position: relative; }
 .sb-search-icon {
   position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
   color: var(--stone); pointer-events: none;
   font-family: var(--mono); font-size: 11px;
 }
 .sb-search input {
-  width: 100%;
-  background: var(--parchment);
-  border: 1px solid var(--border-hi);
-  border-radius: 8px;
-  padding: 8px 10px 8px 28px;
-  color: var(--near-black);
-  font-family: var(--sans);
-  font-size: 13px;
-  outline: none;
+  width: 100%; background: var(--parchment);
+  border: 1px solid var(--border-hi); border-radius: 8px;
+  padding: 8px 10px 8px 28px; color: var(--near-black);
+  font-family: var(--sans); font-size: 13px; outline: none;
   transition: border-color .15s, box-shadow .15s;
 }
 .sb-search input::placeholder { color: var(--stone); }
@@ -107,370 +102,196 @@ html, body { height: 100%; overflow: hidden; background: var(--parchment); color
   position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
   font-family: var(--mono); font-size: 9px;
   color: var(--stone); background: var(--border-hi);
-  padding: 2px 5px; border-radius: 3px;
-  pointer-events: none;
+  padding: 2px 5px; border-radius: 3px; pointer-events: none;
 }
-
-/* New button */
 .btn-new-sb {
   display: flex; align-items: center; justify-content: center; gap: 6px;
-  width: 100%; margin-top: 10px;
-  padding: 9px;
-  background: var(--sand);
-  border: none; border-radius: 8px;
-  color: var(--charcoal);
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
-  cursor: pointer;
-  transition: background .15s, box-shadow .15s;
+  width: 100%; margin-top: 10px; padding: 9px;
+  background: var(--sand); border: none; border-radius: 8px;
+  color: var(--charcoal); font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background .15s, box-shadow .15s;
   box-shadow: 0 0 0 1px var(--ring);
 }
-.btn-new-sb:hover {
-  background: var(--border-hi);
-  box-shadow: 0 0 0 1px var(--terracotta);
-  color: var(--terracotta);
-}
+.btn-new-sb:hover { background: var(--border-hi); box-shadow: 0 0 0 1px var(--terracotta); color: var(--terracotta); }
 
-/* Session list */
 .session-list { flex: 1; overflow-y: auto; }
 .session-list::-webkit-scrollbar { width: 4px; }
 .session-list::-webkit-scrollbar-track { background: transparent; }
 .session-list::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
 
-/* Group */
+/* Groups */
 .group-head {
   display: flex; align-items: center; gap: 8px;
-  padding: 8px 14px;
-  cursor: pointer;
+  padding: 8px 14px; cursor: pointer;
   background: var(--parchment);
   border-top: 1px solid var(--border-hi);
   border-bottom: 1px solid var(--border-hi);
   position: sticky; top: 0; z-index: 2;
-  transition: background .1s;
-  user-select: none;
+  transition: background .1s; user-select: none;
 }
 .group-head:first-child { border-top: none; }
 .group-head:hover { background: var(--sand); }
 .group-head.has-active { background: rgba(201,100,66,.06); }
-
-.group-arrow {
-  color: var(--stone); font-size: 8px;
-  transition: transform .15s; flex-shrink: 0;
-  width: 10px; text-align: center;
-}
+.group-arrow { color: var(--stone); font-size: 8px; transition: transform .15s; flex-shrink: 0; width: 10px; text-align: center; }
 .group-arrow.open { transform: rotate(0); }
 .group-arrow.closed { transform: rotate(-90deg); }
-
 .group-name {
   font-family: var(--mono); font-size: 10.5px; font-weight: 500;
   color: var(--olive); letter-spacing: .04em; text-transform: uppercase;
   flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .group-head.has-active .group-name { color: var(--terracotta); }
-
 .group-count {
   font-family: var(--mono); font-size: 9px;
   color: var(--stone); background: var(--border-hi);
   padding: 2px 6px; border-radius: 10px; flex-shrink: 0;
 }
 .group-edit {
-  font-size: 12px; color: var(--stone);
-  opacity: 0; transition: opacity .1s;
-  cursor: pointer; padding: 2px 4px;
-  border-radius: 3px;
+  font-size: 12px; color: var(--stone); opacity: 0;
+  transition: opacity .1s; cursor: pointer; padding: 2px 4px; border-radius: 3px;
 }
 .group-head:hover .group-edit { opacity: 1; }
 .group-edit:hover { color: var(--terracotta); background: rgba(201,100,66,.1); }
 
 /* Session items */
 .s-item {
-  padding: 11px 16px;
-  cursor: pointer;
+  padding: 11px 16px; cursor: pointer;
   border-bottom: 1px solid var(--border-lo);
-  transition: background .1s;
-  position: relative;
+  transition: background .1s; position: relative;
 }
 .s-item::before {
-  content: '';
-  position: absolute; left: 0; top: 4px; bottom: 4px;
+  content: ''; position: absolute; left: 0; top: 4px; bottom: 4px;
   width: 3px; border-radius: 0 2px 2px 0;
-  background: transparent;
-  transition: background .15s;
+  background: transparent; transition: background .15s;
 }
 .s-item:hover { background: rgba(201,100,66,.04); }
 .s-item.active { background: rgba(201,100,66,.08); }
 .s-item.active::before { background: var(--terracotta); }
-
 .s-title {
-  font-family: var(--serif);
-  font-size: 13.5px; font-weight: 400;
-  line-height: 1.45; color: var(--near-black);
-  margin-bottom: 5px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  font-family: var(--serif); font-size: 13.5px; font-weight: 400;
+  line-height: 1.45; color: var(--near-black); margin-bottom: 5px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.s-item.active .s-title { color: var(--near-black); font-weight: 500; }
-
-.s-foot {
-  display: flex; justify-content: space-between; align-items: center; gap: 6px;
-}
-.s-time {
-  font-family: var(--mono); font-size: 10px;
-  color: var(--stone); white-space: nowrap;
-}
+.s-item.active .s-title { font-weight: 500; }
+.s-foot { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.s-time { font-family: var(--mono); font-size: 10px; color: var(--stone); white-space: nowrap; }
 .s-count {
   font-family: var(--mono); font-size: 10px;
   color: var(--warm-silver); background: var(--border-lo);
   padding: 1px 6px; border-radius: 10px; white-space: nowrap;
 }
 .s-item.active .s-count { background: rgba(201,100,66,.15); color: var(--terracotta); }
+.empty { padding: 32px 16px; text-align: center; color: var(--stone); font-family: var(--mono); font-size: 12px; line-height: 1.8; }
 
-.empty {
-  padding: 32px 16px; text-align: center;
-  color: var(--stone); font-family: var(--mono); font-size: 12px;
-  line-height: 1.8;
-}
-
-/* ────────────────────────── Main Area ─────────────────── */
+/* ── Main ── */
 .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-/* Header */
 .chat-head {
-  padding: 14px 24px;
-  background: var(--white);
+  padding: 14px 24px; background: var(--white);
   border-bottom: 1px solid var(--border-hi);
-  display: flex; align-items: center;
-  justify-content: space-between; gap: 16px;
-  min-height: 64px;
-  box-shadow: 0 1px 0 var(--border-lo);
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  min-height: 64px; box-shadow: 0 1px 0 var(--border-lo); flex-shrink: 0;
 }
-
 .head-left { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-
-.head-breadcrumb {
-  display: flex; align-items: center; gap: 6px;
-}
+.head-breadcrumb { display: flex; align-items: center; gap: 6px; }
 .head-project {
-  font-family: var(--mono); font-size: 10px;
-  color: var(--terracotta); letter-spacing: .04em;
-  background: rgba(201,100,66,.1);
-  padding: 2px 8px; border-radius: 10px;
+  font-family: var(--mono); font-size: 10px; color: var(--terracotta); letter-spacing: .04em;
+  background: rgba(201,100,66,.1); padding: 2px 8px; border-radius: 10px;
 }
 .head-sep { color: var(--border-hi); font-size: 12px; }
-.head-count {
-  font-family: var(--mono); font-size: 10px;
-  color: var(--stone);
-}
-
+.head-count { font-family: var(--mono); font-size: 10px; color: var(--stone); }
 .head-title {
-  font-family: var(--serif);
-  font-size: 16px; font-weight: 500;
+  font-family: var(--serif); font-size: 16px; font-weight: 500;
   line-height: 1.3; color: var(--near-black);
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden;
 }
-
-/* Actions */
 .head-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
-
 .btn-copy {
-  padding: 8px 14px;
-  background: transparent;
-  border: 1px solid var(--border-hi);
-  border-radius: 8px;
-  color: var(--stone);
-  font-family: var(--mono); font-size: 11px;
+  padding: 8px 14px; background: transparent;
+  border: 1px solid var(--border-hi); border-radius: 8px;
+  color: var(--stone); font-family: var(--mono); font-size: 11px;
   cursor: pointer; white-space: nowrap;
   transition: border-color .15s, color .15s;
   box-shadow: 0 0 0 0px var(--ring);
 }
-.btn-copy:hover {
-  border-color: var(--ring);
-  color: var(--olive);
-  box-shadow: 0 0 0 1px var(--ring);
-}
-
+.btn-copy:hover { border-color: var(--ring); color: var(--olive); box-shadow: 0 0 0 1px var(--ring); }
 .btn-resume {
-  display: flex; align-items: center; gap: 7px;
-  padding: 10px 20px;
-  background: var(--terracotta);
-  border: none; border-radius: 8px;
-  color: var(--ivory);
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  display: flex; align-items: center; gap: 7px; padding: 10px 20px;
+  background: var(--terracotta); border: none; border-radius: 8px;
+  color: var(--ivory); font-family: var(--sans); font-size: 13px; font-weight: 500;
   cursor: pointer; white-space: nowrap;
   transition: background .15s, transform .1s, box-shadow .15s;
   box-shadow: 0 0 0 1px rgba(201,100,66,.4), 0 2px 8px rgba(201,100,66,.25);
 }
-.btn-resume:hover {
-  background: var(--coral);
-  box-shadow: 0 0 0 1px rgba(217,119,87,.5), 0 4px 12px rgba(201,100,66,.35);
-}
+.btn-resume:hover { background: var(--coral); box-shadow: 0 0 0 1px rgba(217,119,87,.5), 0 4px 12px rgba(201,100,66,.35); }
 .btn-resume:active { transform: scale(.97); }
-.btn-resume:disabled {
-  background: var(--border-hi); color: var(--stone);
-  box-shadow: none; cursor: not-allowed;
-}
+.btn-resume:disabled { background: var(--border-hi); color: var(--stone); box-shadow: none; cursor: not-allowed; }
 .btn-resume svg { width: 13px; height: 13px; fill: currentColor; }
-
 .btn-resume .kb-hint {
-  font-family: var(--mono); font-size: 9px;
-  opacity: .65;
-  background: rgba(255,255,255,.15);
-  padding: 1px 5px; border-radius: 3px;
-  letter-spacing: .02em;
+  font-family: var(--mono); font-size: 9px; opacity: .65;
+  background: rgba(255,255,255,.15); padding: 1px 5px; border-radius: 3px; letter-spacing: .02em;
 }
 .btn-resume:disabled .kb-hint { display: none; }
 
-/* ────────────────────────── Messages ─────────────────── */
-.messages {
-  flex: 1; overflow-y: auto;
-  padding: 0;
-  background: var(--parchment);
-}
+/* ── Messages ── */
+.messages { flex: 1; overflow-y: auto; padding: 0; background: var(--parchment); }
 .messages::-webkit-scrollbar { width: 4px; }
 .messages::-webkit-scrollbar-thumb { background: var(--border-hi); }
 
-/* Welcome state */
 .welcome {
   height: 100%; display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 16px; text-align: center;
-  padding: 32px;
+  gap: 16px; text-align: center; padding: 32px;
 }
 .welcome-glyph {
-  width: 64px; height: 64px;
-  border: 1px solid var(--border-hi);
-  border-radius: 16px;
+  width: 64px; height: 64px; border: 1px solid var(--border-hi); border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--serif); font-size: 28px;
-  color: var(--stone); opacity: .5;
-  background: var(--ivory);
+  font-family: var(--serif); font-size: 28px; color: var(--stone); opacity: .5; background: var(--ivory);
 }
-.welcome h2 {
-  font-family: var(--serif); font-size: 22px; font-weight: 500;
-  color: var(--charcoal); line-height: 1.3;
-}
-.welcome p {
-  font-family: var(--sans); font-size: 13px; line-height: 1.7;
-  color: var(--stone); max-width: 280px;
-}
-.welcome-shortcuts {
-  display: flex; flex-direction: column; gap: 6px;
-  margin-top: 8px;
-}
-.shortcut-row {
-  display: flex; align-items: center; gap: 8px;
-  font-family: var(--mono); font-size: 11px; color: var(--stone);
-}
+.welcome h2 { font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--charcoal); line-height: 1.3; }
+.welcome p { font-family: var(--sans); font-size: 13px; line-height: 1.7; color: var(--stone); max-width: 280px; }
+.welcome-shortcuts { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.shortcut-row { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--stone); }
 .kb {
   background: var(--ivory); border: 1px solid var(--border-hi);
-  border-radius: 4px; padding: 2px 7px;
-  font-size: 10px; color: var(--olive);
+  border-radius: 4px; padding: 2px 7px; font-size: 10px; color: var(--olive);
   box-shadow: 0 1px 0 var(--border-hi);
 }
 
-/* Message thread */
-.thread {
-  max-width: 780px;
-  margin: 0 auto;
-  padding: 28px 32px 40px;
-}
-
-.msg {
-  display: flex; gap: 14px;
-  padding: 18px 0;
-  border-bottom: 1px solid var(--border-lo);
-}
+.thread { max-width: 780px; margin: 0 auto; padding: 28px 32px 40px; }
+.msg { display: flex; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--border-lo); }
 .msg:last-child { border-bottom: none; }
 .msg:first-child { padding-top: 0; }
-
 .msg-avatar {
-  width: 28px; min-width: 28px; height: 28px;
-  border-radius: 6px;
+  width: 28px; min-width: 28px; height: 28px; border-radius: 6px;
   display: flex; align-items: center; justify-content: center;
-  font-family: var(--mono); font-size: 9px; font-weight: 500;
-  letter-spacing: .04em;
+  font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: .04em;
   flex-shrink: 0; margin-top: 2px;
 }
-.msg.user .msg-avatar {
-  background: var(--sand);
-  color: var(--charcoal);
-  box-shadow: 0 0 0 1px var(--border-hi);
-}
-.msg.assistant .msg-avatar {
-  background: rgba(201,100,66,.12);
-  color: var(--terracotta);
-  box-shadow: 0 0 0 1px rgba(201,100,66,.2);
-}
-
+.msg.user .msg-avatar { background: var(--sand); color: var(--charcoal); box-shadow: 0 0 0 1px var(--border-hi); }
+.msg.assistant .msg-avatar { background: rgba(201,100,66,.12); color: var(--terracotta); box-shadow: 0 0 0 1px rgba(201,100,66,.2); }
 .msg-content { flex: 1; min-width: 0; }
-
-.msg-role {
-  font-family: var(--mono); font-size: 10px; font-weight: 500;
-  letter-spacing: .06em; text-transform: uppercase;
-  margin-bottom: 6px;
-}
+.msg-role { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
 .msg.user .msg-role { color: var(--stone); }
 .msg.assistant .msg-role { color: var(--terracotta); }
-
-.msg-body {
-  font-family: var(--serif);
-  font-size: 15.5px; line-height: 1.75;
-  color: var(--near-black);
-}
-
-/* Markdown */
-.msg-body h1, .msg-body h2, .msg-body h3 {
-  font-weight: 500; margin: 16px 0 8px;
-  font-family: var(--serif); color: var(--near-black);
-}
-.msg-body h1 { font-size: 20px; }
-.msg-body h2 { font-size: 17px; }
-.msg-body h3 { font-size: 15px; }
-.msg-body h1:first-child, .msg-body h2:first-child, .msg-body h3:first-child { margin-top: 0; }
-.msg-body p { margin-bottom: 10px; }
-.msg-body p:last-child { margin-bottom: 0; }
-.msg-body ul, .msg-body ol { padding-left: 22px; margin-bottom: 10px; }
+.msg-body { font-family: var(--serif); font-size: 15.5px; line-height: 1.75; color: var(--near-black); }
+.msg-body h1,.msg-body h2,.msg-body h3 { font-weight: 500; margin: 16px 0 8px; font-family: var(--serif); color: var(--near-black); }
+.msg-body h1 { font-size: 20px; } .msg-body h2 { font-size: 17px; } .msg-body h3 { font-size: 15px; }
+.msg-body h1:first-child,.msg-body h2:first-child,.msg-body h3:first-child { margin-top: 0; }
+.msg-body p { margin-bottom: 10px; } .msg-body p:last-child { margin-bottom: 0; }
+.msg-body ul,.msg-body ol { padding-left: 22px; margin-bottom: 10px; }
 .msg-body li { margin-bottom: 4px; line-height: 1.65; }
-.msg-body code:not(pre code) {
-  background: rgba(201,100,66,.08);
-  border: 1px solid rgba(201,100,66,.2);
-  border-radius: 4px; padding: 1px 5px;
-  font-family: var(--mono); font-size: 13px;
-  color: var(--terracotta);
-}
-.msg-body pre {
-  background: var(--near-black);
-  border-radius: 8px; padding: 16px 18px; margin: 12px 0;
-  overflow-x: auto;
-  box-shadow: 0 0 0 1px var(--dark-surf);
-}
-.msg-body pre code {
-  font-family: var(--mono); font-size: 12.5px;
-  color: var(--warm-silver); background: none; border: none; padding: 0;
-}
-.msg-body strong { font-weight: 600; }
-.msg-body em { font-style: italic; color: var(--olive); }
+.msg-body code:not(pre code) { background: rgba(201,100,66,.08); border: 1px solid rgba(201,100,66,.2); border-radius: 4px; padding: 1px 5px; font-family: var(--mono); font-size: 13px; color: var(--terracotta); }
+.msg-body pre { background: var(--near-black); border-radius: 8px; padding: 16px 18px; margin: 12px 0; overflow-x: auto; box-shadow: 0 0 0 1px var(--dark-surf); }
+.msg-body pre code { font-family: var(--mono); font-size: 12.5px; color: var(--warm-silver); background: none; border: none; padding: 0; }
+.msg-body strong { font-weight: 600; } .msg-body em { font-style: italic; color: var(--olive); }
 .msg-body a { color: var(--terracotta); text-decoration: underline; text-decoration-color: rgba(201,100,66,.4); }
 .msg-body a:hover { text-decoration-color: var(--terracotta); }
-.msg-body blockquote {
-  border-left: 3px solid var(--border-hi);
-  padding-left: 16px; color: var(--olive);
-  margin: 10px 0; font-style: italic;
-}
+.msg-body blockquote { border-left: 3px solid var(--border-hi); padding-left: 16px; color: var(--olive); margin: 10px 0; font-style: italic; }
 .msg-body table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 13.5px; }
-.msg-body th, .msg-body td { border: 1px solid var(--border-hi); padding: 8px 12px; }
-.msg-body th {
-  background: var(--ivory); font-family: var(--mono);
-  font-size: 11px; font-weight: 500; text-transform: uppercase;
-  letter-spacing: .04em; color: var(--olive);
-}
+.msg-body th,.msg-body td { border: 1px solid var(--border-hi); padding: 8px 12px; }
+.msg-body th { background: var(--ivory); font-family: var(--mono); font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; color: var(--olive); }
 
-/* ────────────────────────── Toast ─────────────────────── */
+/* ── Toast ── */
 .toast {
   position: fixed; bottom: 24px; left: 50%;
   transform: translateX(-50%) translateY(8px);
@@ -478,132 +299,71 @@ html, body { height: 100%; overflow: hidden; background: var(--parchment); color
   font-family: var(--mono); font-size: 12px;
   padding: 9px 18px; border-radius: 8px;
   opacity: 0; pointer-events: none;
-  transition: opacity .2s, transform .2s;
-  z-index: 1000;
+  transition: opacity .2s, transform .2s; z-index: 1000;
   box-shadow: 0 4px 16px rgba(0,0,0,.2);
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ────────────────────────── Modal ─────────────────────── */
+/* ── Modal ── */
 .modal-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(20,20,19,.5);
-  z-index: 200; align-items: center; justify-content: center;
-  backdrop-filter: blur(6px);
+  background: rgba(20,20,19,.5); z-index: 200;
+  align-items: center; justify-content: center; backdrop-filter: blur(6px);
 }
 .modal-overlay.open { display: flex; }
-
 .modal-box {
-  background: var(--ivory);
-  border: 1px solid var(--border-hi);
-  border-radius: 12px;
-  padding: 28px;
-  width: 360px;
+  background: var(--ivory); border: 1px solid var(--border-hi); border-radius: 12px;
+  padding: 28px; width: 360px;
   box-shadow: 0 8px 40px rgba(0,0,0,.15), 0 0 0 1px var(--border-hi);
   display: flex; flex-direction: column; gap: 18px;
   animation: modalIn .2s cubic-bezier(.2,.8,.3,1) both;
 }
-@keyframes modalIn {
-  from { opacity: 0; transform: scale(.95) translateY(8px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-.modal-title {
-  font-family: var(--serif); font-size: 18px; font-weight: 500;
-  color: var(--near-black);
-}
-.modal-desc {
-  font-family: var(--sans); font-size: 13px; line-height: 1.6;
-  color: var(--olive);
-  background: rgba(201,100,66,.06);
-  border: 1px solid rgba(201,100,66,.15);
-  border-radius: 8px;
-  padding: 10px 14px;
-}
-.modal-desc code {
-  font-family: var(--mono); font-size: 12px; color: var(--terracotta);
-}
-
-.modal-label {
-  font-family: var(--mono); font-size: 10.5px; font-weight: 500;
-  letter-spacing: .06em; text-transform: uppercase;
-  color: var(--stone); margin-bottom: 8px;
-}
-
-.modal-input {
-  width: 100%;
-  background: var(--parchment);
-  border: 1px solid var(--border-hi);
-  border-radius: 8px;
-  padding: 10px 14px;
-  color: var(--near-black);
-  font-family: var(--serif); font-size: 15px;
-  outline: none;
-  transition: border-color .15s, box-shadow .15s;
-}
+@keyframes modalIn { from { opacity: 0; transform: scale(.95) translateY(8px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+.modal-title { font-family: var(--serif); font-size: 18px; font-weight: 500; color: var(--near-black); }
+.modal-desc { font-family: var(--sans); font-size: 13px; line-height: 1.6; color: var(--olive); background: rgba(201,100,66,.06); border: 1px solid rgba(201,100,66,.15); border-radius: 8px; padding: 10px 14px; }
+.modal-desc code { font-family: var(--mono); font-size: 12px; color: var(--terracotta); }
+.modal-label { font-family: var(--mono); font-size: 10.5px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--stone); margin-bottom: 8px; }
+.modal-input { width: 100%; background: var(--parchment); border: 1px solid var(--border-hi); border-radius: 8px; padding: 10px 14px; color: var(--near-black); font-family: var(--serif); font-size: 15px; outline: none; transition: border-color .15s, box-shadow .15s; }
 .modal-input::placeholder { color: var(--stone); font-style: italic; }
-.modal-input:focus {
-  border-color: var(--terracotta);
-  box-shadow: 0 0 0 3px rgba(201,100,66,.12);
-}
-
-.modal-actions {
-  display: flex; gap: 8px; justify-content: flex-end;
-}
-.btn-modal-cancel {
-  padding: 9px 16px;
-  background: transparent;
-  border: 1px solid var(--border-hi);
-  border-radius: 8px;
-  color: var(--stone);
-  font-family: var(--sans); font-size: 13px;
-  cursor: pointer;
-  transition: border-color .15s, color .15s;
-}
+.modal-input:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(201,100,66,.12); }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.btn-modal-cancel { padding: 9px 16px; background: transparent; border: 1px solid var(--border-hi); border-radius: 8px; color: var(--stone); font-family: var(--sans); font-size: 13px; cursor: pointer; transition: border-color .15s, color .15s; }
 .btn-modal-cancel:hover { border-color: var(--ring); color: var(--olive); }
-
-.btn-modal-ok {
-  padding: 9px 20px;
-  background: var(--terracotta);
-  border: none; border-radius: 8px;
-  color: var(--ivory);
-  font-family: var(--sans); font-size: 13px; font-weight: 500;
-  cursor: pointer;
-  transition: background .15s;
-  box-shadow: 0 0 0 1px rgba(201,100,66,.4);
-}
+.btn-modal-ok { padding: 9px 20px; background: var(--terracotta); border: none; border-radius: 8px; color: var(--ivory); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: background .15s; box-shadow: 0 0 0 1px rgba(201,100,66,.4); }
 .btn-modal-ok:hover { background: var(--coral); }
 </style>
 </head>
 <body>
-
 <div class="app">
 
-  <!-- ── Sidebar ── -->
+  <!-- Sidebar -->
   <div class="sidebar">
     <div class="sb-head">
       <div class="sb-logo">
         <span class="sb-logo-text">Claude Sessions</span>
         <span class="sb-logo-badge">HISTORY</span>
+        <div class="lang-toggle">
+          <button class="lang-btn active" id="btnJa" onclick="setLang('ja')">JA</button>
+          <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
+        </div>
       </div>
       <div class="sb-search">
         <span class="sb-search-icon">/</span>
-        <input type="text" id="searchInput" placeholder="セッションを検索…" oninput="filter(this.value)">
+        <input type="text" id="searchInput" oninput="filter(this.value)">
         <span class="sb-search-hint">⌘K</span>
       </div>
-      <button class="btn-new-sb" onclick="newChat()">
+      <button class="btn-new-sb" id="btnNewSb" onclick="newChat()">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        新しいセッション
+        <span id="labelNewSession"></span>
       </button>
     </div>
     <div class="session-list" id="list">
-      <div class="empty">loading…</div>
+      <div class="empty" id="loadingMsg">loading…</div>
     </div>
   </div>
 
-  <!-- ── Main ── -->
+  <!-- Main -->
   <div class="main">
-    <!-- Header -->
     <div class="chat-head">
       <div class="head-left">
         <div class="head-breadcrumb">
@@ -611,54 +371,48 @@ html, body { height: 100%; overflow: hidden; background: var(--parchment); color
           <span class="head-sep" id="headSep" style="display:none">›</span>
           <span class="head-count" id="headCount"></span>
         </div>
-        <div class="head-title" id="headTitle">セッションを選択してください</div>
+        <div class="head-title" id="headTitle"></div>
       </div>
       <div class="head-actions">
-        <button class="btn-copy" id="btnCopy" onclick="copyId()" style="display:none">ID コピー</button>
+        <button class="btn-copy" id="btnCopy" onclick="copyId()" style="display:none"></button>
         <button class="btn-resume" id="btnResume" onclick="resume()" disabled>
           <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          ターミナルで再開
+          <span id="labelResume"></span>
           <span class="kb-hint">Enter</span>
         </button>
       </div>
     </div>
 
-    <!-- Messages -->
     <div class="messages" id="messages">
       <div class="welcome">
         <div class="welcome-glyph">C</div>
-        <h2>会話履歴ブラウザ</h2>
-        <p>左のリストからセッションを選ぶと<br>会話の全文が表示されます</p>
+        <h2 id="welcomeTitle"></h2>
+        <p id="welcomeDesc"></p>
         <div class="welcome-shortcuts">
-          <div class="shortcut-row"><span class="kb">/</span> or <span class="kb">⌘K</span> 検索</div>
-          <div class="shortcut-row"><span class="kb">↑↓</span> セッション移動</div>
-          <div class="shortcut-row"><span class="kb">Enter</span> ターミナルで再開</div>
+          <div class="shortcut-row"><span class="kb">/</span> or <span class="kb">⌘K</span> <span id="scSearch"></span></div>
+          <div class="shortcut-row"><span class="kb">↑↓</span> <span id="scNav"></span></div>
+          <div class="shortcut-row"><span class="kb">Enter</span> <span id="scResume"></span></div>
         </div>
       </div>
     </div>
   </div>
-
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <!-- New Chat Modal -->
 <div class="modal-overlay" id="newModal">
   <div class="modal-box">
-    <div class="modal-title">新しいセッション</div>
-    <div class="modal-desc">
-      名前を入れると <code>sessions/名前/</code> フォルダを作成し、<br>そこで Claude を起動します。
-    </div>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-desc" id="modalDesc"></div>
     <div>
-      <div class="modal-label">プロジェクト名（任意）</div>
+      <div class="modal-label" id="modalLabel"></div>
       <input id="newNameInput" class="modal-input" type="text"
-        placeholder="例: sns-bot、unity-game…"
         onkeydown="if(event.key==='Enter')confirmNew();if(event.key==='Escape')closeModal('newModal')">
     </div>
     <div class="modal-actions">
-      <button class="btn-modal-cancel" onclick="closeModal('newModal')">キャンセル</button>
-      <button class="btn-modal-ok" onclick="confirmNew()">開く ↗</button>
+      <button class="btn-modal-cancel" id="modalCancel" onclick="closeModal('newModal')"></button>
+      <button class="btn-modal-ok" id="modalOk" onclick="confirmNew()"></button>
     </div>
   </div>
 </div>
@@ -666,10 +420,108 @@ html, body { height: 100%; overflow: hidden; background: var(--parchment); color
 <script>
 marked.setOptions({ breaks: true, gfm: true });
 
+// ── i18n ──────────────────────────────────────────────────
+const I18N = {
+  ja: {
+    searchPlaceholder: 'セッションを検索…',
+    newSession:        '新しいセッション',
+    defaultTitle:      'セッションを選択してください',
+    copyId:            'ID コピー',
+    resumeBtn:         'ターミナルで再開',
+    welcomeTitle:      '会話履歴ブラウザ',
+    welcomeDesc:       '左のリストからセッションを選ぶと<br>会話の全文が表示されます',
+    scSearch:          '検索',
+    scNav:             'セッション移動',
+    scResume:          'ターミナルで再開',
+    empty:             'セッションが見つかりません',
+    modalTitle:        '新しいセッション',
+    modalDesc:         '名前を入れると <code>sessions/名前/</code> フォルダを作成し、<br>そこで Claude を起動します。',
+    modalLabel:        'プロジェクト名（任意）',
+    modalPlaceholder:  '例: sns-bot、unity-game…',
+    cancel:            'キャンセル',
+    open:              '開く ↗',
+    rename:            'リネーム',
+    countSuffix:       '件',
+    toastResumed:      'ターミナルで再開しました ↗',
+    toastCopied:       'コマンドをコピーしました',
+    toastOpened:       n => `「${n || '新規'}」を開きました ↗`,
+    toastCopiedCmd:    'コマンドをコピーしました: claude',
+    toastIdCopied:     'Session ID をコピーしました',
+    toastRenamed:      'プロジェクト名を変更しました',
+    renamePrompt:      c => `「${c}」の表示名を変更:`,
+    messages:          n => `${n} messages`,
+  },
+  en: {
+    searchPlaceholder: 'Search sessions…',
+    newSession:        'New Session',
+    defaultTitle:      'Select a session',
+    copyId:            'Copy ID',
+    resumeBtn:         'Resume in Terminal',
+    welcomeTitle:      'Session History Browser',
+    welcomeDesc:       'Select a session from the list<br>to view the full conversation',
+    scSearch:          'Search',
+    scNav:             'Navigate sessions',
+    scResume:          'Resume in terminal',
+    empty:             'No sessions found',
+    modalTitle:        'New Session',
+    modalDesc:         'Add a name to create a <code>sessions/name/</code> folder<br>and launch Claude there.',
+    modalLabel:        'Project name (optional)',
+    modalPlaceholder:  'e.g. sns-bot, unity-game…',
+    cancel:            'Cancel',
+    open:              'Open ↗',
+    rename:            'Rename',
+    countSuffix:       '',
+    toastResumed:      'Opened in terminal ↗',
+    toastCopied:       'Command copied',
+    toastOpened:       n => `Opened "${n || 'new'}" ↗`,
+    toastCopiedCmd:    'Command copied: claude',
+    toastIdCopied:     'Session ID copied',
+    toastRenamed:      'Project name updated',
+    renamePrompt:      c => `Rename "${c}" to:`,
+    messages:          n => `${n} messages`,
+  }
+};
+
+let lang = localStorage.getItem('lang') || 'ja';
+
+function t(key, ...args) {
+  const v = I18N[lang][key];
+  return typeof v === 'function' ? v(...args) : v;
+}
+
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('lang', l);
+  document.documentElement.lang = l;
+  document.getElementById('btnJa').classList.toggle('active', l === 'ja');
+  document.getElementById('btnEn').classList.toggle('active', l === 'en');
+  applyLang();
+  renderFiltered(); // re-render count suffix etc.
+}
+
+function applyLang() {
+  document.getElementById('searchInput').placeholder     = t('searchPlaceholder');
+  document.getElementById('labelNewSession').textContent = t('newSession');
+  document.getElementById('headTitle').textContent       = document.getElementById('headTitle').dataset.custom || t('defaultTitle');
+  document.getElementById('btnCopy').textContent         = t('copyId');
+  document.getElementById('labelResume').textContent     = t('resumeBtn');
+  document.getElementById('welcomeTitle').textContent    = t('welcomeTitle');
+  document.getElementById('welcomeDesc').innerHTML       = t('welcomeDesc');
+  document.getElementById('scSearch').textContent        = t('scSearch');
+  document.getElementById('scNav').textContent           = t('scNav');
+  document.getElementById('scResume').textContent        = t('scResume');
+  document.getElementById('modalTitle').textContent      = t('modalTitle');
+  document.getElementById('modalDesc').innerHTML         = t('modalDesc');
+  document.getElementById('modalLabel').textContent      = t('modalLabel');
+  document.getElementById('newNameInput').placeholder    = t('modalPlaceholder');
+  document.getElementById('modalCancel').textContent     = t('cancel');
+  document.getElementById('modalOk').textContent         = t('open');
+}
+
+// ── Data ──────────────────────────────────────────────────
 let sessions = [], currentId = null, currentFilter = '';
 const collapsed = new Set();
 
-// ── Data ──────────────────────────────────────────────────
 async function load() {
   const r = await fetch('/api/sessions');
   sessions = await r.json();
@@ -680,7 +532,7 @@ async function load() {
 function render(list) {
   const el = document.getElementById('list');
   if (!list.length) {
-    el.innerHTML = '<div class="empty">セッションが見つかりません</div>';
+    el.innerHTML = `<div class="empty">${t('empty')}</div>`;
     return;
   }
 
@@ -698,13 +550,14 @@ function render(list) {
   el.innerHTML = sortedGroups.map(([proj, items]) => {
     const isOpen = !collapsed.has(proj);
     const activeInGroup = items.some(s => s.id === currentId);
+    const suffix = t('countSuffix');
     return `
       <div class="group">
         <div class="group-head ${activeInGroup ? 'has-active' : ''}" onclick="toggleGroup('${esc(proj)}')">
           <span class="group-arrow ${isOpen ? 'open' : 'closed'}">▾</span>
           <span class="group-name">${esc(proj)}</span>
           <span class="group-count">${items.length}</span>
-          <span class="group-edit" onclick="event.stopPropagation();renameGroup('${esc(items[0].project_raw)}','${esc(proj)}')" title="リネーム">✎</span>
+          <span class="group-edit" onclick="event.stopPropagation();renameGroup('${esc(items[0].project_raw)}','${esc(proj)}')" title="${t('rename')}">✎</span>
         </div>
         <div class="group-body" style="display:${isOpen ? 'block' : 'none'}">
           ${items.map(s => `
@@ -712,7 +565,7 @@ function render(list) {
               <div class="s-title">${esc(s.title)}</div>
               <div class="s-foot">
                 <span class="s-time">${reltime(s.last_timestamp)}</span>
-                <span class="s-count">${s.message_count}件</span>
+                <span class="s-count">${s.message_count}${suffix}</span>
               </div>
             </div>`).join('')}
         </div>
@@ -748,7 +601,6 @@ async function open_(id) {
   const data = await r.json();
   const s    = sessions.find(x => x.id === id);
 
-  // Header update
   const projEl = document.getElementById('headProject');
   const sepEl  = document.getElementById('headSep');
   if (s?.project) {
@@ -759,12 +611,15 @@ async function open_(id) {
     projEl.style.display = 'none';
     sepEl.style.display  = 'none';
   }
-  document.getElementById('headTitle').textContent   = s?.title || id;
-  document.getElementById('headCount').textContent   = `${data.messages.length} messages`;
+
+  const titleEl = document.getElementById('headTitle');
+  titleEl.textContent   = s?.title || id;
+  titleEl.dataset.custom = s?.title || id;
+
+  document.getElementById('headCount').textContent   = t('messages', data.messages.length);
   document.getElementById('btnResume').disabled      = false;
   document.getElementById('btnCopy').style.display   = '';
 
-  // Render messages
   const msgsEl = document.getElementById('messages');
   const thread = document.createElement('div');
   thread.className = 'thread';
@@ -796,10 +651,10 @@ async function resume() {
   const r = await fetch(`/api/resume/${currentId}`, { method: 'POST' });
   const d = await r.json();
   if (d.ok) {
-    toast('ターミナルで再開しました ↗');
+    toast(t('toastResumed'));
   } else {
     copyCmd();
-    toast('コマンドをコピーしました');
+    toast(t('toastCopied'));
   }
 }
 
@@ -818,29 +673,29 @@ async function confirmNew() {
   });
   const d = await r.json();
   if (d.ok) {
-    toast(`「${name || '新規'}」を開きました ↗`);
+    toast(t('toastOpened', name));
     setTimeout(load, 2000);
   } else {
     navigator.clipboard.writeText('claude');
-    toast('コマンドをコピーしました: claude');
+    toast(t('toastCopiedCmd'));
   }
 }
 
 async function renameGroup(raw, current) {
-  const name = prompt(`「${current}」の表示名を変更:`, current);
+  const name = prompt(t('renamePrompt', current), current);
   if (name === null) return;
   await fetch('/api/alias', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ raw, display: name })
   });
   await load();
-  toast('プロジェクト名を変更しました');
+  toast(t('toastRenamed'));
 }
 
 function copyId() {
   if (!currentId) return;
   navigator.clipboard.writeText(currentId);
-  toast('Session ID をコピーしました');
+  toast(t('toastIdCopied'));
 }
 
 function copyCmd() {
@@ -854,32 +709,28 @@ function closeModal(id) {
 
 // ── Keyboard shortcuts ────────────────────────────────────
 document.addEventListener('keydown', e => {
-  // ⌘K or / → focus search
   if ((e.metaKey && e.key === 'k') || (e.key === '/' && document.activeElement.tagName !== 'INPUT')) {
     e.preventDefault();
     document.getElementById('searchInput').focus();
     document.getElementById('searchInput').select();
   }
-  // Escape → blur / close modal
   if (e.key === 'Escape') {
     closeModal('newModal');
     document.activeElement.blur?.();
   }
-  // Enter → resume (when not in input)
   if (e.key === 'Enter' && document.activeElement.tagName !== 'INPUT' && currentId) {
     resume();
   }
-  // Arrow keys → navigate sessions
   if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && document.activeElement.tagName !== 'INPUT') {
     e.preventDefault();
-    const flatSessions = sessions.filter(s =>
+    const flat = sessions.filter(s =>
       !currentFilter || s.title.toLowerCase().includes(currentFilter) || s.project.toLowerCase().includes(currentFilter)
     );
-    if (!flatSessions.length) return;
-    const idx = flatSessions.findIndex(s => s.id === currentId);
+    if (!flat.length) return;
+    const idx  = flat.findIndex(s => s.id === currentId);
     const next = e.key === 'ArrowDown'
-      ? flatSessions[Math.min(idx + 1, flatSessions.length - 1)]
-      : flatSessions[Math.max(idx - 1, 0)];
+      ? flat[Math.min(idx + 1, flat.length - 1)]
+      : flat[Math.max(idx - 1, 0)];
     if (next && next.id !== currentId) {
       open_(next.id);
       document.querySelector(`[data-id="${next.id}"]`)?.scrollIntoView({ block: 'nearest' });
@@ -909,6 +760,7 @@ function reltime(ts) {
 }
 
 // ── Init ──────────────────────────────────────────────────
+setLang(lang); // apply saved language
 load();
 setInterval(load, 30000);
 </script>
