@@ -1,5 +1,7 @@
 # Claude Session Browser
 
+[日本語版 README はこちら](README.ja.md)
+
 A lightweight web UI for browsing and resuming your **Claude Code CLI** conversation history — right from the browser.
 
 ![screenshot placeholder](https://via.placeholder.com/800x450?text=Claude+Session+Browser)
