@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse
-import json, subprocess
+import json, re, subprocess
 from pathlib import Path
 
 app = FastAPI()
@@ -57,11 +57,16 @@ def parse_session(path: Path):
     except: pass
     return messages, cwd
 
+# Encode home path the same way Claude Code does (each : \ / → -)
+_HOME_ENCODED = re.sub(r'[:\\/]', '-', str(Path.home())).strip('-')
+
 def project_label(raw, aliases=None):
     if aliases and raw in aliases:
         return aliases[raw]
-    if raw.startswith("C--Users-uni-"): return "~/" + raw[len("C--Users-uni-"):]
-    if raw == "C--Users-uni": return "~"
+    if raw == _HOME_ENCODED:
+        return "~"
+    if raw.startswith(_HOME_ENCODED + "-"):
+        return "~/" + raw[len(_HOME_ENCODED) + 1:]
     return raw
 
 def all_sessions():

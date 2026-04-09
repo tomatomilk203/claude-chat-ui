@@ -1,6 +1,8 @@
 sessions/
 uploads/
 meta.json
+aliases.json
+test_sessions.json
 __pycache__/
 *.pyc
 .env
