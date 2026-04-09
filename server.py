@@ -1,12 +1,24 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse
 import json, subprocess
 from pathlib import Path
 
 app = FastAPI()
 
-CLAUDE_DIR = Path.home() / ".claude" / "projects"
-BASE_DIR   = Path(__file__).parent
+CLAUDE_DIR   = Path.home() / ".claude" / "projects"
+BASE_DIR     = Path(__file__).parent
+ALIASES_FILE = BASE_DIR / "aliases.json"   # project raw_name → display name
+SESSIONS_DIR = BASE_DIR / "sessions"
+SESSIONS_DIR.mkdir(exist_ok=True)
+
+def load_aliases():
+    if ALIASES_FILE.exists():
+        try: return json.loads(ALIASES_FILE.read_text(encoding="utf-8"))
+        except: pass
+    return {}
+
+def save_aliases(d):
+    ALIASES_FILE.write_text(json.dumps(d, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def extract_text(content):
@@ -45,12 +57,15 @@ def parse_session(path: Path):
     except: pass
     return messages, cwd
 
-def project_label(raw):
+def project_label(raw, aliases=None):
+    if aliases and raw in aliases:
+        return aliases[raw]
     if raw.startswith("C--Users-uni-"): return "~/" + raw[len("C--Users-uni-"):]
     if raw == "C--Users-uni": return "~"
     return raw
 
 def all_sessions():
+    aliases  = load_aliases()
     sessions = []
     if not CLAUDE_DIR.exists(): return sessions
     for proj_dir in CLAUDE_DIR.iterdir():
@@ -64,7 +79,8 @@ def all_sessions():
             title = first[:60] + ("…" if len(first)>60 else "")
             sessions.append({
                 "id":             jf.stem,
-                "project":        project_label(proj_dir.name),
+                "project":        project_label(proj_dir.name, aliases),
+                "project_raw":    proj_dir.name,
                 "title":          title,
                 "last_timestamp": last["timestamp"],
                 "last_message":   last["content"][:80],
@@ -106,16 +122,46 @@ def api_resume(session_id: str):
         return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
 
 @app.post("/api/new")
-def api_new():
-    """Windows Terminalで新タブを開いてclaudeを新規起動"""
+async def api_new(request: Request):
+    """プロジェクト名を指定してWindows Terminalで新規起動"""
+    body    = await request.json()
+    name    = body.get("name", "").strip()
+    safe    = "".join(c if c.isalnum() or c in "-_ " else "_" for c in name).strip() if name else ""
+    work_dir = str(Path.home())
+
+    if safe:
+        folder = SESSIONS_DIR / safe
+        folder.mkdir(parents=True, exist_ok=True)
+        work_dir = str(folder)
+
     try:
         subprocess.Popen(
-            'wt.exe new-tab cmd /k "claude"',
-            shell=True, cwd=str(Path.home())
+            f'wt.exe new-tab --title "{name or "claude"}" cmd /k "claude"',
+            shell=True, cwd=work_dir
         )
-        return {"ok": True}
+        return {"ok": True, "cwd": work_dir}
     except Exception as e:
-        return JSONResponse({"ok": False, "error": str(e)}, status_code=500)
+        return JSONResponse({"ok": False, "error": str(e), "cwd": work_dir}, status_code=500)
+
+@app.post("/api/alias")
+async def api_alias(request: Request):
+    """プロジェクトの表示名を保存"""
+    body    = await request.json()
+    raw     = body.get("raw", "")
+    display = body.get("display", "").strip()
+    if not raw:
+        return JSONResponse({"ok": False}, status_code=400)
+    aliases = load_aliases()
+    if display:
+        aliases[raw] = display
+    else:
+        aliases.pop(raw, None)   # 空なら削除（デフォルト名に戻す）
+    save_aliases(aliases)
+    return {"ok": True}
+
+@app.get("/api/aliases")
+def api_get_aliases():
+    return load_aliases()
 
 
 if __name__ == "__main__":

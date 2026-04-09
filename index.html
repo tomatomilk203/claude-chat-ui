@@ -164,6 +164,9 @@ body::before {
   flex-shrink: 0;
 }
 .s-count { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
+.group-edit { font-size: 11px; color: var(--dim); opacity: 0; transition: opacity .15s; cursor: pointer; padding: 2px 4px; }
+.group-head:hover .group-edit { opacity: 1; }
+.group-edit:hover { color: var(--amber); }
 
 /* ── Main ── */
 .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -386,6 +389,33 @@ body::before {
 
 <div class="toast" id="toast"></div>
 
+<!-- New Chat Modal -->
+<div id="newModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px)">
+  <div style="background:#181408;border:1px solid var(--dim);border-radius:6px;padding:28px;width:340px;display:flex;flex-direction:column;gap:16px;">
+    <div style="font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;color:var(--amber);text-transform:uppercase;">New Session</div>
+    <div>
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-bottom:8px;">プロジェクト名（任意）</div>
+      <input id="newNameInput" type="text"
+        placeholder="例: sns-bot、unity-game…"
+        style="width:100%;background:var(--hover);border:1px solid var(--dim);border-radius:4px;padding:9px 12px;color:var(--text);font-family:var(--font-mono);font-size:13px;outline:none;"
+        onkeydown="if(event.key==='Enter')confirmNew();if(event.key==='Escape')document.getElementById('newModal').style.display='none'">
+    </div>
+    <div style="font-family:var(--font-mono);font-size:11px;color:var(--muted);line-height:1.6;">
+      名前をつけると <code style="color:var(--amber);background:var(--hover);padding:1px 5px;border-radius:3px;">sessions/名前/</code> フォルダを作成してそこで起動します。
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button onclick="document.getElementById('newModal').style.display='none'"
+        style="padding:8px 14px;background:transparent;border:1px solid var(--dim);border-radius:4px;color:var(--muted);font-family:var(--font-mono);font-size:11px;cursor:pointer;">
+        キャンセル
+      </button>
+      <button onclick="confirmNew()"
+        style="padding:8px 18px;background:var(--amber);border:none;border-radius:4px;color:#0e0b06;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;">
+        開く ↗
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
 marked.setOptions({ breaks: true, gfm: true });
 
@@ -426,6 +456,7 @@ function render(list) {
           <span class="group-arrow">${isOpen ? '▾' : '▸'}</span>
           <span class="group-name">${esc(proj)}</span>
           <span class="group-count">${items.length}</span>
+          <span class="group-edit" onclick="event.stopPropagation();renameGroup('${esc(items[0].project_raw)}','${esc(proj)}')" title="リネーム">✎</span>
         </div>
         <div class="group-body" style="display:${isOpen?'block':'none'}">
           ${items.map(s => `
@@ -501,16 +532,38 @@ async function resume() {
   }
 }
 
-async function newChat() {
-  const r = await fetch('/api/new', {method:'POST'});
+function newChat() {
+  document.getElementById('newModal').style.display = 'flex';
+  document.getElementById('newNameInput').value = '';
+  setTimeout(() => document.getElementById('newNameInput').focus(), 50);
+}
+
+async function confirmNew() {
+  const name = document.getElementById('newNameInput').value.trim();
+  document.getElementById('newModal').style.display = 'none';
+  const r = await fetch('/api/new', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({name})
+  });
   const d = await r.json();
   if (d.ok) {
-    toast('新しいターミナルを開きました ↗');
+    toast(`「${name||'新規'}」を開きました ↗`);
     setTimeout(load, 2000);
   } else {
     navigator.clipboard.writeText('claude');
     toast('コマンドをコピーしました: claude');
   }
+}
+
+async function renameGroup(raw, current) {
+  const name = prompt(`「${current}」の表示名を変更:`, current);
+  if (name === null) return;
+  await fetch('/api/alias', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({raw, display: name})
+  });
+  await load();
+  toast('プロジェクト名を変更しました');
 }
 
 function copyId() {
