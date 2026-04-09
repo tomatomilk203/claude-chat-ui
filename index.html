@@ -414,44 +414,27 @@ async function sendMessage() {
       }),
     });
 
-    const reader = res.body.getReader();
-    const dec    = new TextDecoder();
-    let buf = '', aiEl = null;
+    // ジョブIDを取得してポーリング開始
+    const { job_id } = await res.json();
 
     while (true) {
-      const {done, value} = await reader.read();
-      if (done) break;
-      buf += dec.decode(value, {stream: true});
-      const parts = buf.split('\n\n');
-      buf = parts.pop();
+      await new Promise(r => setTimeout(r, 1000));
+      const poll = await fetch(`/api/job/${job_id}`);
+      const ev   = await poll.json();
 
-      for (const part of parts) {
-        if (!part.startsWith('data: ')) continue;
-        let ev;
-        try { ev = JSON.parse(part.slice(6)); } catch { continue; }
+      if (ev.status === 'running') continue;
 
-        if (ev.type === 'init') {
-          currentSid = ev.session_id;
+      document.getElementById(tid)?.remove();
 
-        } else if (ev.type === 'text') {
-          document.getElementById(tid)?.remove();
-          if (!aiEl) { aiEl = document.createElement('div'); aiEl.className = 'msg assistant'; document.getElementById('messages').appendChild(aiEl); }
-          aiEl.innerHTML = `<div class="msg-role">Claude</div>${toolChipsHtml(ev.tools||[])}<div class="msg-bubble">${marked.parse(ev.content)}</div>`;
-          aiEl.querySelectorAll('pre code').forEach(e => hljs.highlightElement(e));
-          scrollBottom();
-
-        } else if (ev.type === 'tools') {
-          document.getElementById(tid)?.remove();
-          if (!aiEl) { aiEl = document.createElement('div'); aiEl.className = 'msg assistant'; document.getElementById('messages').appendChild(aiEl); }
-          aiEl.innerHTML = `<div class="msg-role">Claude</div>${toolChipsHtml(ev.tools)}<div class="msg-bubble"><div class="typing-dot"><span></span><span></span><span></span></div></div>`;
-          scrollBottom();
-
-        } else if (ev.type === 'done') {
-          document.getElementById(tid)?.remove();
-          await loadSessions();
-          document.querySelector(`[data-id="${currentSid}"]`)?.classList.add('active');
-        }
+      if (ev.status === 'done') {
+        if (ev.session_id) currentSid = ev.session_id;
+        appendMessage('assistant', ev.result, [], []);
+        await loadSessions();
+        document.querySelector(`[data-id="${currentSid}"]`)?.classList.add('active');
+      } else {
+        appendMessage('assistant', '⚠ エラー: ' + (ev.error || '不明'), [], []);
       }
+      break;
     }
   } catch (e) {
     document.getElementById(tid)?.remove();
