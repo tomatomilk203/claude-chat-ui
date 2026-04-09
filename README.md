@@ -1,27 +1,41 @@
 # Claude Session Browser
 
-[日本語版 README はこちら](README.ja.md)
+[日本語](README.ja.md)
 
-A lightweight web UI for browsing and resuming your **Claude Code CLI** conversation history — right from the browser.
+> **The simplest way to browse your Claude Code history.**
+> No Electron. No React. No config files. Just `python server.py`.
 
-![screenshot placeholder](https://via.placeholder.com/800x450?text=Claude+Session+Browser)
+A minimal web UI for browsing and resuming **Claude Code CLI** conversations — read-only, local-only, zero bloat.
 
-## What it does
+---
 
-Claude Code stores every conversation as a `.jsonl` file in `~/.claude/projects/`. This tool reads those files and gives you:
+## Why this over the alternatives?
 
-- **Session history browser** — all conversations grouped by project folder
-- **Full message viewer** — rendered Markdown, code blocks, tables
-- **Resume in terminal** — one click opens Windows Terminal and runs `claude --resume <id>`
-- **New session launcher** — start Claude in a named project folder
-- **Project aliases** — rename cryptic folder names to readable labels
-- **Keyboard shortcuts** — `/` to search, `↑↓` to navigate, `Enter` to resume
+There are many Claude Code UI projects out there. Most are full IDEs with terminals, file explorers, and plugin systems. This is not that.
+
+**Claude Session Browser does one thing:** lets you find and resume past conversations, fast.
+
+- 2 files (`server.py` + `index.html`)
+- No build step, no Node.js, no database
+- Opens automatically when you type `claude`
+- Never touches your session files
+
+---
+
+## Features
+
+- **Session list** — grouped by project, sorted by recency
+- **Full message viewer** — Markdown, code blocks, tables rendered
+- **Resume in terminal** — one click launches Windows Terminal with `claude --resume`
+- **New session** — start Claude in a named project folder
+- **Project aliases** — rename cryptic paths to readable labels
+- **Keyboard shortcuts** — `/` search, `↑↓` navigate, `Enter` resume
 
 ## Requirements
 
-- [Claude Code CLI](https://claude.ai/code) installed and authenticated
+- [Claude Code CLI](https://claude.ai/code) installed
 - Python 3.8+
-- Windows Terminal (`wt.exe`) — for the "Resume in Terminal" feature
+- Windows Terminal (`wt.exe`) — for resume feature
 
 ## Install
 
@@ -29,19 +43,14 @@ Claude Code stores every conversation as a `.jsonl` file in `~/.claude/projects/
 git clone https://github.com/tomatomilk203/claude-chat-ui.git
 cd claude-chat-ui
 pip install -r requirements.txt
-```
-
-## Run
-
-```bash
 python server.py
 ```
 
-Then open [http://127.0.0.1:8766](http://127.0.0.1:8766) in your browser.
+Open [http://127.0.0.1:8766](http://127.0.0.1:8766).
 
-## Auto-launch on terminal open (Windows)
+## Auto-open when you type `claude` (Windows)
 
-To have the server start and browser open automatically whenever you open a terminal, add this to your `~/.bashrc`:
+Add to `~/.bashrc`:
 
 ```bash
 _start_claude_ui() {
@@ -54,30 +63,25 @@ _start_claude_ui() {
   powershell.exe -Command "Start-Process 'http://127.0.0.1:8766'" &>/dev/null &
   disown
 }
-
-claude() {
-  _start_claude_ui
-  command claude "$@"
-}
+claude() { _start_claude_ui; command claude "$@"; }
 ```
 
-Or use the included `claude.bat` — add the repo folder to your PATH and it wraps the `claude` command automatically.
+Or add the repo folder to your PATH — the included `claude.bat` wraps the command automatically.
 
 ## Keyboard shortcuts
 
 | Key | Action |
 |-----|--------|
-| `/` or `Cmd+K` | Focus search |
+| `/` or `Ctrl+K` | Search |
 | `↑` / `↓` | Navigate sessions |
-| `Enter` | Resume selected session in terminal |
-| `Esc` | Close modal / blur |
+| `Enter` | Resume in terminal |
+| `Esc` | Close / cancel |
 
 ## Notes
 
-- Read-only — this tool never modifies your Claude sessions
-- Local only — no data leaves your machine
-- The "Resume in Terminal" button requires Windows Terminal (`wt.exe`)
-- Sessions are auto-refreshed every 30 seconds
+- **Read-only** — never modifies your session files
+- **Local only** — no data leaves your machine
+- Auto-refreshes every 30 seconds
 
 ## License
 

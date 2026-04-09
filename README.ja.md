@@ -1,21 +1,42 @@
 # Claude Session Browser
 
-**Claude Code CLI** の会話履歴をブラウザで快適に閲覧・再開できる軽量 Web UI です。
+[English](README.md)
+
+> **Claude Code の会話履歴を見るための、いちばんシンプルなツール。**
+> Electron なし。React なし。設定ファイルなし。`python server.py` だけ。
+
+Claude Code CLI の会話履歴をブラウザで閲覧・再開できる最小構成の Web UI です。
+読み取り専用・ローカル完結・余計な機能一切なし。
+
+---
+
+## なぜこれを使うのか
+
+Claude Code の UI ツールは他にも多くあります。ターミナル内蔵・ファイルエクスプローラー・プラグインシステムを備えたフル IDE 的なものが多いです。これはそういうツールではありません。
+
+**Claude Session Browser はひとつのことだけやります：** 過去の会話を素早く見つけて再開すること。
+
+- ファイル 2 つだけ（`server.py` + `index.html`）
+- ビルド不要・Node.js 不要・データベース不要
+- `claude` と打つだけで自動起動
+- セッションファイルには一切触れない
+
+---
 
 ## できること
 
-- **会話履歴の一覧表示** — プロジェクトフォルダごとにグループ化して表示
-- **全文ビューアー** — Markdown・コードブロック・テーブルをレンダリング表示
-- **ターミナルで再開** — ワンクリックで Windows Terminal が開き `claude --resume <id>` を実行
-- **新規セッション起動** — プロジェクト名を指定して Claude を起動
+- **セッション一覧** — プロジェクト別にグループ化・更新順にソート
+- **全文ビューアー** — Markdown・コードブロック・テーブルをレンダリング
+- **ターミナルで再開** — ワンクリックで Windows Terminal が開き `claude --resume` を実行
+- **新規セッション** — プロジェクト名を指定して起動
 - **プロジェクト別名** — 長いフォルダ名をわかりやすい名前に変更
-- **キーボードショートカット** — `/` で検索、`↑↓` で移動、`Enter` で再開
+- **キーボードショートカット** — `/` 検索・`↑↓` 移動・`Enter` 再開
 
 ## 必要なもの
 
-- [Claude Code CLI](https://claude.ai/code) インストール済み・認証済み
+- [Claude Code CLI](https://claude.ai/code) インストール済み
 - Python 3.8 以上
-- Windows Terminal（`wt.exe`）— 「ターミナルで再開」機能に必要
+- Windows Terminal（`wt.exe`）— 再開機能に必要
 
 ## インストール
 
@@ -23,19 +44,14 @@
 git clone https://github.com/tomatomilk203/claude-chat-ui.git
 cd claude-chat-ui
 pip install -r requirements.txt
-```
-
-## 起動
-
-```bash
 python server.py
 ```
 
-ブラウザで [http://127.0.0.1:8766](http://127.0.0.1:8766) を開いてください。
+[http://127.0.0.1:8766](http://127.0.0.1:8766) を開く。
 
-## ターミナルを開いたら自動起動する（Windows）
+## `claude` と打つだけで自動起動する設定（Windows）
 
-ターミナルを開くたびにサーバーが立ち上がり、ブラウザも自動で開くようにするには、`~/.bashrc` に以下を追加します：
+`~/.bashrc` に追加：
 
 ```bash
 _start_claude_ui() {
@@ -48,35 +64,25 @@ _start_claude_ui() {
   powershell.exe -Command "Start-Process 'http://127.0.0.1:8766'" &>/dev/null &
   disown
 }
-
-claude() {
-  _start_claude_ui
-  command claude "$@"
-}
+claude() { _start_claude_ui; command claude "$@"; }
 ```
 
-または付属の `claude.bat` を使う方法もあります。リポジトリフォルダを PATH の先頭に追加するだけで、`claude` コマンドに自動的にラップされます。
-
-```
-# PATH に追加（PowerShell）
-$env:PATH = "C:\path\to\claude-chat-ui;" + $env:PATH
-```
+または、リポジトリフォルダを PATH の先頭に追加するだけで、付属の `claude.bat` が自動的にラップします。
 
 ## キーボードショートカット
 
 | キー | 操作 |
 |------|------|
-| `/` または `Cmd+K` | 検索ボックスにフォーカス |
-| `↑` / `↓` | セッションを上下に移動 |
-| `Enter` | 選択中のセッションをターミナルで再開 |
-| `Esc` | モーダルを閉じる / フォーカス解除 |
+| `/` または `Ctrl+K` | 検索 |
+| `↑` / `↓` | セッション移動 |
+| `Enter` | ターミナルで再開 |
+| `Esc` | 閉じる・キャンセル |
 
 ## 注意事項
 
-- 読み取り専用 — このツールは Claude のセッションファイルを一切変更しません
-- ローカル完結 — データは外部に送信されません
-- 「ターミナルで再開」は Windows Terminal（`wt.exe`）が必要です
-- セッション一覧は 30 秒ごとに自動更新されます
+- **読み取り専用** — セッションファイルを変更しません
+- **ローカル完結** — データは外部に送信されません
+- 30 秒ごとに自動更新
 
 ## ライセンス
 
